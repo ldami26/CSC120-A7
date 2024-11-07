@@ -1,3 +1,4 @@
+
 public class Building {
 
     protected String name;
@@ -12,13 +13,12 @@ public class Building {
 
     /* Overloaded constructor with address only */
     public Building(String address) {
-        this(); // Call default constructor
-        this.address = address; // Override address
+        this("<Name Unknown>", address, 1); // Initialize with unknown name and given address
     }
 
-    /* Overloaded constructor with name, address */
+    /* Overloaded constructor with name and address */
     public Building(String name, String address) {
-        this(name, address, 1); // Call full constructor with hard-coded # floors
+        this(name, address, 1); // Initialize with provided name and address and one floor
     }
 
     /* Full constructor */
@@ -45,25 +45,23 @@ public class Building {
     }
 
     /* Navigation methods */
-    public Building enter() {
+    public void enter() {
         if (activeFloor != -1) {
             throw new RuntimeException("You are already inside this Building.");
         }
         this.activeFloor = 1;
         System.out.println("You are now inside " + this.name + " on the ground floor.");
-        return this; // Return a pointer to the current building
     }
 
-    public Building exit() {
+    public void exit() {
         if (this.activeFloor == -1) {
             throw new RuntimeException("You are not inside this Building. Must call enter() before exit().");
         }
         if (this.activeFloor > 1) {
-            throw new RuntimeException("You have fallen out a window from floor #" +this.activeFloor + "!");
+            throw new RuntimeException("You have fallen out a window from floor #" + this.activeFloor + "!");
         }
         System.out.println("You have left " + this.name + ".");
         this.activeFloor = -1; // We're leaving the building, so we no longer have a valid active floor
-        return null; // We're outside now, so the building is null
     }
 
     public void goToFloor(int floorNum) {
@@ -71,24 +69,31 @@ public class Building {
             throw new RuntimeException("You are not inside this Building. Must call enter() before navigating between floors.");
         }
         if (floorNum < 1 || floorNum > this.nFloors) {
-            throw new RuntimeException("Invalid floor number. Valid range for this Building is 1-" + this.nFloors +".");
+            throw new RuntimeException("Invalid floor number. Valid range for this Building is 1-" + this.nFloors + ".");
         }
         System.out.println("You are now on floor #" + floorNum + " of " + this.name);
         this.activeFloor = floorNum;
     }
 
     public void goUp() {
-        this.goToFloor(this.activeFloor + 1);
+        if (this.activeFloor >= this.nFloors) {
+            throw new RuntimeException("You are already on the top floor.");
+        }
+        goToFloor(this.activeFloor + 1);
     }
 
     public void goDown() {
-        this.goToFloor(this.activeFloor - 1);
+        if (this.activeFloor <= 1) {
+            throw new RuntimeException("You are already on the ground floor.");
+        }
+        goToFloor(this.activeFloor - 1);
     }
 
     public void showOptions() {
         System.out.println("Available options at " + this.name + ":\n + enter() \n + exit() \n + goUp() \n + goDown()\n + goToFloor(n)");
     }
 
+    @Override
     public String toString() {
         return this.name + " is a " + this.nFloors + "-story building located at " + this.address + ".";
     }
@@ -110,5 +115,4 @@ public class Building {
         fordHall.goDown();
         fordHall.exit();
     }
-
 }
